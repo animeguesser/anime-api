@@ -45,6 +45,6 @@ async def time():
 
     """
 
-    return {'days_since':days_since_start(), 'time_until':time_until_tomorrow()}
+    return {'daysSince':days_since_start(), 'timeUntil':time_until_tomorrow()}
 
 # 
