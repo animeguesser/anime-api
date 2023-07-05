@@ -32,3 +32,16 @@ On success, it will return a HTTP 200 with a JSON containing:
 ```
 {"days_since":4,"time_until":65782.799797}
 ```
+
+### /search
+This route will be a `POST` with the search query. It will require the `Content-Type` header to specifically be `application/json`.
+
+On success, it will return a HTTP 200 with a JSON list of anime titles. Ex:
+
+#### Testing the route
+To test the route, you can simply use `CURL` to send data into the API. As long as you use `query` as the key along in the request, it
+will process and return the titles.
+
+```
+curl -d '{"query":"naruto"}' -H "Content-Type: application/json" -X POST http://localhost:8000/search
+```
