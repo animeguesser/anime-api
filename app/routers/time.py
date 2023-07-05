@@ -1,0 +1,50 @@
+from fastapi import APIRouter
+import datetime
+
+router = APIRouter()
+
+current_time = datetime.datetime.now()
+
+# Helper functions
+def days_since_start():
+    """
+    Get the amount of days that have passed since the initial start date
+
+    Returns:
+        int: number of days from the initial starting day
+    """
+
+    # Hard coded start day
+    start_day = datetime.datetime(2023, 7, 1)
+
+    return (current_time - start_day).days
+
+def time_until_tomorrow():
+    """
+    Get the amount of time before the next day (in UTC)
+
+    Returns:
+        datetime.timedelta: time delta of the amount of time until the next day
+    """
+
+    # Calculate time until next day
+    tomorrow_date = current_time + datetime.timedelta(days=1)
+
+    return datetime.datetime.combine(tomorrow_date, datetime.time.min) - current_time
+
+# Routes
+@router.get("/time")
+async def time():
+    """
+    Get current day and time until next day. All time is calculated and presented in UTC
+
+    Returns:
+        JSON:
+            days_since: number of days from the initial starting day
+            time_until: time (in seconds) until the next day
+
+    """
+
+    return {'days_since':days_since_start(), 'time_until':time_until_tomorrow()}
+
+# 

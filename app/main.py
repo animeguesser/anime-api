@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .routers import tools
-from .routers import current_time
+from .routers import time
 
 app = FastAPI()
 
@@ -21,4 +21,4 @@ app.add_middleware(
 
 # Public routes
 app.include_router(tools.router)
-app.include_router(current_time.router)
+app.include_router(time.router)
