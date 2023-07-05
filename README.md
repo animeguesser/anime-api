@@ -38,6 +38,10 @@ This route will be a `POST` with the search query. It will require the `Content-
 
 On success, it will return a HTTP 200 with a JSON list of anime titles. Ex:
 
+```
+{"titles":["919","\"Bungaku Shoujo\" Movie","3-Nen D-Gumi Glass no Kamen","3 Choume no Tama: Onegai! Momo-chan wo Sagashite!!","#1"]}
+```
+
 #### Testing the route
 To test the route, you can simply use `CURL` to send data into the API. As long as you use `query` as the key along in the request, it
 will process and return the titles.
