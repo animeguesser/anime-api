@@ -22,6 +22,6 @@ async def search(answer_query: AnswerQuery):
 
     # Hard coded answer for testing
     if answer_query.answer.lower() == "Cowboy Bebop".lower():
-        return {'answer': 'true'}
+        return {'answer':True}
     else:
-        return {'answer': 'false'}
+        return {'answer':False}
