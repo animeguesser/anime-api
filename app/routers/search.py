@@ -22,10 +22,7 @@ async def search(search_query: SearchQuery):
 
     anime_list = {"titles": []}
 
-    anime_list['titles'].append(data[random.randint(0,100)]['title'])
-    anime_list['titles'].append(data[random.randint(0,100)]['title'])
-    anime_list['titles'].append(data[random.randint(0,100)]['title'])
-    anime_list['titles'].append(data[random.randint(0,100)]['title'])
-    anime_list['titles'].append(data[random.randint(0,100)]['title'])
+    for i in range(100):
+        anime_list['titles'].append(data[random.randint(0,14000)]['title'])
 
     return anime_list
