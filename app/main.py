@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from .routers import tools
 from .routers import time
 from .routers import search
+from .routers import answer
 
 app = FastAPI()
 
@@ -24,3 +25,4 @@ app.add_middleware(
 app.include_router(tools.router)
 app.include_router(time.router)
 app.include_router(search.router)
+app.include_router(answer.router)
