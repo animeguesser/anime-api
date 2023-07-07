@@ -20,6 +20,7 @@ async def search(search_query: SearchQuery):
             titles: the titles of animes
     """
 
+    # Disallow less than 3 characters
     if len(search_query.query) < 3:
         return {}
 
@@ -31,7 +32,7 @@ async def search(search_query: SearchQuery):
     anime_list = {"titles": []}
 
     # Cycle through list to find an include
-    for idx, item in enumerate(data):
+    for item in data:
         if search_query.query.lower() in item['title'].lower():
             anime_list['titles'].append(item['title'])
 
