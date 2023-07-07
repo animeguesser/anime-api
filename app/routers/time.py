@@ -3,7 +3,7 @@ import datetime
 
 router = APIRouter()
 
-current_time = datetime.datetime.now()
+current_time = datetime.datetime.utcnow()
 
 # Helper functions
 def days_since_start():
