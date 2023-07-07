@@ -36,7 +36,11 @@ def lambda_handler(event, context):
     
     # Load the query
     query = json.loads(event['body'])
-    search_item = query['query']
+
+    try:
+        search_item = query['query']
+    except KeyError:
+        return return_bad()
 
     # Ensure that the query is at least 3 characters
     if len(search_item) < 3 or len(search_item) > 15:
