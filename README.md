@@ -49,3 +49,18 @@ will process and return the titles.
 ```
 curl -d '{"query":"naruto"}' -H "Content-Type: application/json" -X POST http://localhost:8000/search
 ```
+
+### /answer
+This route will be a `POST` with the answer query. It wiull require the `Content-Type` header to specifically be `application/json`.
+
+If the answer query matches the correct answer as defined by the day, it will return JSON with either a key of answer either being true or false.
+
+```
+{"answer":"true"}
+```
+
+#### Testing the route
+To test the route, you can simple use `CURL` to send data into the API. As long as you use `answer` as the key along in the request it will process and return JSON with true or false.
+```
+curl -d '{"answer":"Cowboy Bebop"}' -H "Content-Type: application/json" -X POST http://localhost:8000/answer
+```
