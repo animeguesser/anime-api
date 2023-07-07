@@ -25,8 +25,8 @@ On success, it will return a HTTP 200 with a JSON containing:
 ```
 
 ### /search
-This route will be a `POST` with the search query. It will require the `Content-Type` header to specifically be `application/json`. It will require to have a key of `query` in order to be proper and have a length
-of three or greater.
+This route will be a `POST` with the search query. It will require the `Content-Type` header to specifically be `application/json`. It will require to have a key of `query` in order to be proper and have a value 
+of length three or greater.
 
 #### Testing the route
 To test the route, you can use `CURL` to send data into the API.
