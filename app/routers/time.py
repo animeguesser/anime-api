@@ -16,7 +16,10 @@ def days_since_start():
 
     # Hard coded start day
     start_day = datetime.datetime(2023, 7, 1)
+
+    # Get current UTC time
     current_time = datetime.datetime.utcnow()
+
     return (current_time - start_day).days
 
 def time_until_tomorrow():
@@ -26,7 +29,10 @@ def time_until_tomorrow():
     Returns:
         datetime.timedelta: time delta of the amount of time until the next day
     """
+
+    # Get current UTC time
     current_time = datetime.datetime.utcnow()
+    
     # Calculate time until next day
     tomorrow_date = current_time + datetime.timedelta(days=1)
 
