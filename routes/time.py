@@ -1,9 +1,5 @@
-from fastapi import APIRouter
 import datetime
-
-router = APIRouter()
-
-
+import json
 
 # Helper functions
 def days_since_start():
@@ -38,19 +34,15 @@ def time_until_tomorrow():
 
     return datetime.datetime.combine(tomorrow_date, datetime.time.min) - current_time
 
-# Routes
-@router.get("/time")
-async def time():
-    """
-    Get current day and time until next day. All time is calculated and presented in UTC
+def lambda_handler(event, context):
 
-    Returns:
-        JSON:
-            days_since: number of days from the initial starting day
-            time_until: time (in seconds) until the next day
-
-    """
-
-    return {'currentDay':days_since_start(), 'timeUntil':time_until_tomorrow()}
-
-# 
+    # Return time
+    return {
+        'statusCode': 200,
+        'headers': {
+            'Content-Type': 'application/json'
+        },
+        'body': json.dumps({
+            'currentDay':days_since_start(), 'timeUntil':str(time_until_tomorrow().seconds)
+            })
+    }
