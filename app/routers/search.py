@@ -20,6 +20,9 @@ async def search(search_query: SearchQuery):
             titles: the titles of animes
     """
 
+    if len(search_query.query) < 3:
+        return {}
+
     # For testing, open file directly and load it
     f = open('app/parsed-anime-list-mini.json')
     data = json.load(f)
