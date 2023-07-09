@@ -15,6 +15,9 @@ def return_bad():
     return {
         'statusCode': 400,
         'headers': {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'POST, PUT, GET, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With',
             'Content-Type': 'text/plain'
         },
         'body': '400: Bad request'
@@ -29,6 +32,17 @@ def lambda_handler(event, context):
         JSON:
             titles: the titles of animes
     """
+    
+    # Preflight cors issue
+    if event['httpMethod'] == 'OPTIONS':
+        return {
+            'statusCode': 200,
+            'headers': {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': '*',
+                'Access-Control-Allow-Headers': '*'
+            } 
+        }
 
     # Ensure there's something in the body
     if not event['body']:
@@ -62,6 +76,9 @@ def lambda_handler(event, context):
     return {
         'statusCode': 200,
         'headers': {
+            'Access-Control-Allow-Headers': 'Content-Type',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'OPTIONS,POST',
             'Content-Type': 'application/json'
         },
         'body': json.dumps(anime_list)
