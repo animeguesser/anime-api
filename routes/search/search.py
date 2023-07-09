@@ -129,8 +129,7 @@ def lambda_handler(event, context):
 
     # Final list of only titles
     anime_list = {'titles': []}
-    for anime in anime_score_list:
-        anime_list['titles'].append(anime['title'])
+    anime_list['titles'] = [x['title'] for x in anime_score_list]
 
     # Log msg
     print(f'Return list: {anime_list}')
