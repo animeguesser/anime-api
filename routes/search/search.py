@@ -1,6 +1,6 @@
 import json
 from rapidfuzz import fuzz
-import pandas as pd
+from operator import itemgetter
 
 # Helper functions
 def return_bad():
@@ -65,8 +65,8 @@ def lambda_handler(event, context):
     f = open('./parsed-anime-list-mini.json')
     data = json.load(f)
 
-    # Keep track of titles that are possible
-    anime_list = {'titles': []}
+    # Keep track of titles and scores that are possible
+    anime_score_list = []
 
     # Cycle through list parsed list
     for item in data:
@@ -74,21 +74,24 @@ def lambda_handler(event, context):
         # Perform a fuzzy search and get a score back
         fuzzy_search = fuzz.ratio(search_item.lower(), item['title'].lower())
 
+        # Check if the search item is in the title
+        in_title = search_item.lower() in item['title'].lower()
+
         # If the query is in the title or has a high fuzzy search score
-        if search_item.lower() in item['title'].lower() or fuzzy_search > 65:
+        if in_title or fuzzy_search > 65:
 
             # If the query is in the title, give it a higher score
-            if search_item.lower() in item['title'].lower():
+            if in_title:
                 
                 # If the query is the same as the title, give it the highest score
                 if search_item.lower() == item['title'].lower():
-                    anime_list['titles'].append({'title': item['title'], 'score': 200})
+                    anime_score_list.append({'title': item['title'], 'score': 200})
                 else:
-                    anime_list['titles'].append({'title': item['title'], 'score': 100})
+                    anime_score_list.append({'title': item['title'], 'score': 100})
 
             # Else, give it the fuzzy search score
             else:
-                anime_list['titles'].append({'title': item['title'], 'score': fuzzy_search})
+                anime_score_list.append({'title': item['title'], 'score': fuzzy_search})
         
         # Check the synonymns if it's not in the title or a fuzzy search isn't matched
         else:
@@ -97,33 +100,34 @@ def lambda_handler(event, context):
                 # Perform a fuzzy search for each synonym and get a score back
                 fuzzy_search = fuzz.ratio(search_item.lower(), synonym.lower())
 
+                # Check if the search item is in the synonym
+                in_synonym = search_item.lower() in synonym.lower()
+
                 # If the query is in the synonym or has a high fuzzy search score
-                if search_item.lower() in synonym.lower() or fuzzy_search > 65:
+                if in_synonym or fuzzy_search > 65:
 
                     # If the query is in the synonym, give it a higher score
-                    if search_item.lower() in synonym.lower():
+                    if in_synonym:
 
                         # If the query is the same as the synonym, give it the highest score
                         if search_item.lower() == synonym.lower():
-                            anime_list['titles'].append({'title': f'{item["title"]} [{synonym}]', 'score': 200})
+                            anime_score_list.append({'title': f'{item["title"]} [{synonym}]', 'score': 200})
                         else:
-                            anime_list['titles'].append({'title': f'{item["title"]} [{synonym}]', 'score': 100})
-
+                            anime_score_list.append({'title': f'{item["title"]} [{synonym}]', 'score': 100})
                         break
                     
                     # Else, give it the fuzzy search score
                     else:
-                        anime_list['titles'].append({'title': f'{item["title"]} [{synonym}]', 'score': fuzzy_search})
+                        anime_score_list.append({'title': f'{item["title"]} [{synonym}]', 'score': fuzzy_search})
                         break
 
-    # Put in dataframe for sorting
-    df = pd.DataFrame(anime_list['titles'])
-    df = df.sort_values(by='score', ascending=False)
-    df = df.drop('score', axis=1)
+    # Sort possible anime titles by score
+    anime_score_list = sorted(anime_score_list, key=itemgetter('score'), reverse=True)
 
-    output = df.to_json(orient='records')
-    del(df)
-    anime_list.clear()
+    # Final list of only titles
+    anime_list = {'titles': []}
+    for anime in anime_score_list:
+        anime_list['titles'].append(anime['title'])
 
     # Return the list of animes
     return {
@@ -134,5 +138,5 @@ def lambda_handler(event, context):
             'Access-Control-Allow-Methods': 'OPTIONS,POST',
             'Content-Type': 'application/json'
         },
-        'body': output
+        'body': json.dumps(anime_list)
     }
