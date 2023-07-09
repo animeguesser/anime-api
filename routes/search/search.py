@@ -60,6 +60,9 @@ def lambda_handler(event, context):
     # Ensure that the query is at least 3 characters
     if len(search_item) < 3 or len(search_item) > 15:
         return return_bad()
+    
+    # Log msg
+    print(f'Search query: {search_item}')
         
     # Open file directly and load it
     f = open('./parsed-anime-list-mini.json')
@@ -128,6 +131,9 @@ def lambda_handler(event, context):
     anime_list = {'titles': []}
     for anime in anime_score_list:
         anime_list['titles'].append(anime['title'])
+
+    # Log msg
+    print(f'Return list: {anime_list}')
 
     # Return the list of animes
     return {
