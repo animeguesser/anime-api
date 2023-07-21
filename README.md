@@ -31,7 +31,7 @@ of length three or greater.
 #### Testing the route
 To test the route, you can use `CURL` to send data into the API.
 ```
-curl -d '{"query":"Naruto"}' -H "Content-Type: application/json" -X POSThttps://<api>/search
+curl -d '{"query":"Naruto"}' -H "Content-Type: application/json" -X POST https://<api>/search
 ```
 
 On success, it will return a HTTP 200 with a JSON list of anime titles:
