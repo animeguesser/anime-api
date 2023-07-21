@@ -132,12 +132,17 @@ def lambda_handler(event, context):
         if len(synonym_rank) > 0:
             # Sort synonyms by highest score
             synonym_rank = sorted(synonym_rank, key=itemgetter('score'), reverse=True)
+            highest_synonym = synonym_rank[0]["synonym"]
             
             # Add the highest ranked synonym to the title
             if title != {}:
-                title['title'] = f'{title["title"]} [{synonym_rank[0]["synonym"]}]'
+                if title['title'].lower() != highest_synonym.lower():
+                    title['title'] = f'{title["title"]} [{synonym_rank[0]["synonym"]}]'
             else:
-                title = {'title': f'{item["title"]} [{synonym_rank[0]["synonym"]}]', 'score': synonym_rank[0]["score"]}
+                if item['title'].lower() != highest_synonym.lower():
+                    title = {'title': f'{item["title"]} [{synonym_rank[0]["synonym"]}]', 'score': synonym_rank[0]["score"]}
+                else:
+                    title = {'title': f'{item["title"]}', 'score': synonym_rank[0]["score"]}
 
             add_title = True
 
