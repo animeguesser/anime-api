@@ -80,6 +80,9 @@ def lambda_handler(event, context):
         # Check if the search item is in the title
         in_title = search_item.lower() in item['title'].lower()
 
+        title = {}
+        add_title = False
+
         # If the query is in the title or has a high fuzzy search score
         if in_title or fuzzy_search > 65:
 
@@ -88,41 +91,58 @@ def lambda_handler(event, context):
                 
                 # If the query is the same as the title, give it the highest score
                 if search_item.lower() == item['title'].lower():
-                    anime_score_list.append({'title': item['title'], 'score': 200})
+                    title = {'title': item['title'], 'score': 200}
+                    add_title = True
                 else:
-                    anime_score_list.append({'title': item['title'], 'score': 100})
+                    title = {'title': item['title'], 'score': 100}
+                    add_title = True
 
             # Else, give it the fuzzy search score
             else:
-                anime_score_list.append({'title': item['title'], 'score': fuzzy_search})
+                title = {'title': item['title'], 'score': fuzzy_search}
+                add_title = True
+
+        synonym_rank = []
         
-        # Check the synonymns if it's not in the title or a fuzzy search isn't matched
-        else:
-            for synonym in item['synonyms']:
-                
-                # Perform a fuzzy search for each synonym and get a score back
-                fuzzy_search = fuzz.ratio(search_item.lower(), synonym.lower())
+        # Check the synonymns
+        for synonym in item['synonyms']:
+            
+            # Perform a fuzzy search for each synonym and get a score back
+            fuzzy_search = fuzz.ratio(search_item.lower(), synonym.lower())
 
-                # Check if the search item is in the synonym
-                in_synonym = search_item.lower() in synonym.lower()
+            # Check if the search item is in the synonym
+            in_synonym = search_item.lower() in synonym.lower()
 
-                # If the query is in the synonym or has a high fuzzy search score
-                if in_synonym or fuzzy_search > 65:
+            # If the query is in the synonym or has a high fuzzy search score
+            if in_synonym or fuzzy_search > 65:
 
-                    # If the query is in the synonym, give it a higher score
-                    if in_synonym:
+                # If the query is in the synonym, give it a higher score
+                if in_synonym:
 
-                        # If the query is the same as the synonym, give it the highest score
-                        if search_item.lower() == synonym.lower():
-                            anime_score_list.append({'title': f'{item["title"]} [{synonym}]', 'score': 200})
-                        else:
-                            anime_score_list.append({'title': f'{item["title"]} [{synonym}]', 'score': 100})
-                        break
-                    
-                    # Else, give it the fuzzy search score
+                    # If the query is the same as the synonym, give it the highest score
+                    if search_item.lower() == synonym.lower():
+                        synonym_rank.append({'synonym': synonym, 'score': 200})
                     else:
-                        anime_score_list.append({'title': f'{item["title"]} [{synonym}]', 'score': fuzzy_search})
-                        break
+                        synonym_rank.append({'synonym': synonym, 'score': 100})
+                
+                # Else, give it the fuzzy search score
+                else:
+                    synonym_rank.append({'synonym': synonym, 'score': fuzzy_search})         
+
+        if len(synonym_rank) > 0:
+            # Sort synonyms by highest score
+            synonym_rank = sorted(synonym_rank, key=itemgetter('score'), reverse=True)
+            
+            # Add the highest ranked synonym to the title
+            if title != {}:
+                title['title'] = f'{title["title"]} [{synonym_rank[0]["synonym"]}]'
+            else:
+                title = {'title': f'{item["title"]} [{synonym_rank[0]["synonym"]}]', 'score': synonym_rank[0]["score"]}
+
+            add_title = True
+
+        if add_title == True:
+            anime_score_list.append(title)
 
     # Sort possible anime titles by score
     anime_score_list = sorted(anime_score_list, key=itemgetter('score'), reverse=True)
