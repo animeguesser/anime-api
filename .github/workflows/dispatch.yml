@@ -28,11 +28,3 @@ jobs:
         mv search.py lambda_function.py
         zip -j deploy.zip ./*
         aws lambda update-function-code --function-name=animeguess-route-search --zip-file=fileb://deploy.zip
-
-    - name: Build and deploy time
-      if: ${{ github.event.client_payload.action }} == "build" && ${{ github.event.client.payload.route }} == "time"
-      working-directory: ./routes/time
-      run: |
-        mv time.py lambda_function.py
-        zip -j deploy.zip ./*
-        aws lambda update-function-code --function-name=animeguesser-route-time --zip-file=fileb://deploy.zip
