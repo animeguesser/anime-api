@@ -1,8 +1,10 @@
 name: Dispatch
-on: [repository_dispatch]
+on:
+  repository_dispatch:
+    types: [build]
 
 jobs:
-  build:
+  Build-Dispatch:
     name: Dispatch build
     runs-on: ubuntu-latest
 
