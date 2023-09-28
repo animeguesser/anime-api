@@ -1,0 +1,36 @@
+name: Dispatch
+on: [repository_dispatch]
+
+jobs:
+  build:
+    name: Dispatch build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-2
+        role-duration-seconds: 1200
+
+    - name: Build and deploy search
+      if: ${{ github.event.client_payload.action }} == "build" && ${{ github.event.client_payload.route }} == "search"
+      working-directory: ./routes/search
+      run: |
+        aws s3 cp ${{ secrets.PARSED_LIST }} ./
+        mv search.py lambda_function.py
+        zip -j deploy.zip ./*
+        aws lambda update-function-code --function-name=animeguess-route-search --zip-file=fileb://deploy.zip
+
+    - name: Build and deploy time
+      if: ${{ github.event.client_payload.action }} == "build" && ${{ github.event.client.payload.route }} == "time"
+      working-directory: ./routes/time
+      run: |
+        mv time.py lambda_function.py
+        zip -j deploy.zip ./*
+        aws lambda update-function-code --function-name=animeguesser-route-time --zip-file=fileb://deploy.zip
