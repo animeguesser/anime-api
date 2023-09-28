@@ -1,0 +1,42 @@
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - routes/search/**
+
+jobs:
+  build:
+    name: Deploy to AWS
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./routes/search
+
+    # These permissions are needed to interact with GitHub's OIDC Token endpoint.
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-2
+        role-duration-seconds: 1200
+
+    - name: Download parsed json
+      run: |
+        aws s3 cp ${{ secrets.PARSED_LIST }} ./
+
+
+    - name: Deploy Lambda
+      run: |
+        mv search.py lambda_function.py
+        zip -j deploy.zip ./*
+        aws lambda update-function-code --function-name=animeguess-route-search --zip-file=fileb://deploy.zip
