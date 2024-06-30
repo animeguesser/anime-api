@@ -46,7 +46,9 @@ def lambda_handler(event, context):
             'Content-Type': 'application/json'
         },
         'body': json.dumps({
-            'currentDay':days_since_start(), 
-            'timeUntil':time_until_tomorrow().seconds
+            #'currentDay':days_since_start(), 
+            #'timeUntil':time_until_tomorrow().seconds
+            'currentDay':365,
+            'timeUntil':9999999999999
             })
     }
